@@ -77,7 +77,8 @@ MASCoTE requires 3 input data:
 ## Usage
 <a name="usage"></a>
 
-### Tutorial for full pipeline and components
+### Full pipeline and tutorial
+<a name="fullpipelineandtutorial"></a>
 
 This repository contains the two main components of MASCoTE and a full exemplary BASH scripts which encodes the entire pipeline of MASCoTE. We provide an exemplary [BASH script](script/runMASCoTE.sh) that implements the entire framework of MASCoTE. This script, its usage and all the steps are described in detailed in a guided [tutorial](doc/doc_runmascote.md).
 
