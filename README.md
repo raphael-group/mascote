@@ -73,7 +73,7 @@ MASCoTE requires 3 input data:
 | `REF_ALLELE` | Allele of the reference genome in `POS` |
 | `ALT_ALLELE` | Alternate allele of the germline SNP in `POS` |
 
-3. **A list of contig to exclude**. This list is optional but highly reccomended. This is a list containing all the contigs in the given reference genome that should be excluded. An example of this list is given [here](data/ignore.tsv). MASCoTE requires the list to be given in a file with every excluded contig in a new line.
+3. **A list of contig to exclude**. This list is optional but highly reccomended. This is a list containing all the contigs in the given reference genome that should be excluded. An example of this list is given [here](examples/ignore.txt). MASCoTE requires the list to be given in a file with every excluded contig in a new line.
 
 ## Usage
 <a name="usage"></a>
