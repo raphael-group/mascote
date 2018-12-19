@@ -17,7 +17,6 @@ The simulated data and the results of all the methods considered in the comparis
     - [Software](#software)
 2. [Setup](#setup)
     - [Dependencies](#dependencies)
-    - [Compilation](#compilation)
     - [Required data](#requireddata)
 3. [Usage](#usage)
     - [Full pipeline and tutorial](#fullpipelineandtutorial)
