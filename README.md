@@ -20,7 +20,6 @@ The simulated data and the results of all the methods considered in the comparis
     - [Required data](#requireddata)
 3. [Usage](#usage)
     - [Full pipeline and tutorial](#fullpipelineandtutorial)
-    - [Detailed steps](#detailedsteps)
     - [Tips and reccomendations](#tipsandreccomendations)
 4. [Current issues](#currentissues)
 5. [Contacts](#contacts)
