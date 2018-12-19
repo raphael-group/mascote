@@ -1,24 +1,28 @@
 # MASCoTE <br/> <sub><u>M</u>ulti-sample <u>A</u>llele-specific <u>S</u>imulation of <u>T</u>umor <u>C</u>opy-number <u>E</u>volution</sub> #
 
 MASCoTE (Multi-sample Allele-specific Simulation of Copy-number Tumor Evolution) is a simulation framework
-to generate sequencing reads with appropriately corrections for the differences in genome lengths between the normal and tumor clone(s) present in multiple mixed samples from the same patient. MASCoTE simulates a normal diploid human genome and the genomes of tumor clones characterized by different kind of somatic copy-number aberrations (CNAs) and whole-genome duplications (WGDs) accumulated during an evolutionary process modeled as a phylogenetic tree. Different CNAs include focal CNAs, and CNAs involving chromosomal arms and whole chromosomes. MASCoTE has been designed and developped by Simone Zaccaria in the group of prof. Ben Raphael at Princeton University. The full description of the simulation framework, is described together with the HATCHet algorithm in
+to generate sequencing reads with appropriately corrections for the differences in genome lengths between the normal and tumor clone(s) present in multiple mixed samples from the same patient. MASCoTE simulates a normal diploid human genome and the genomes of tumor clones characterized by different kind of somatic copy-number aberrations (CNAs) and whole-genome duplications (WGDs) accumulated during an evolutionary process modeled as a phylogenetic tree. Different CNAs include focal CNAs, and CNAs involving chromosomal arms and whole chromosomes. MASCoTE has been designed and developped by Simone Zaccaria in the group of prof. Ben Raphael at Princeton University. The full description of the simulation framework is included together with the HATCHet algorithm in
 
-[Simone Zaccaria and Ben Raphael, under submission, 2018](...)
+[Simone Zaccaria and Ben Raphael, 2018](https://www.biorxiv.org/content/early/2018/12/17/496174)
+
+The simulated data and the results of all the methods considered in the comparison are available at
+
+[manuscript's data](https://github.com/raphael-group/hatchet-paper)
 
 
 ## Contents ##
 
 1. [Overview](#overview)
-  - [Simulation framework](#simulationframework)
-  - [Software](#software)
+    - [Simulation framework](#simulationframework)
+    - [Software](#software)
 2. [Setup](#setup)
-  - [Dependencies](#dependencies)
-  - [Compilation](#compilation)
-  - [Required data](#requireddata)
+    - [Dependencies](#dependencies)
+    - [Compilation](#compilation)
+    - [Required data](#requireddata)
 3. [Usage](#usage)
-  - [Full pipeline and tutorial](#fullpipelineandtutorial)
-  - [Detailed steps](#detailedsteps)
-  - [Tips and reccomendations](#tipsandreccomendations)
+    - [Full pipeline and tutorial](#fullpipelineandtutorial)
+    - [Detailed steps](#detailedsteps)
+    - [Tips and reccomendations](#tipsandreccomendations)
 4. [Current issues](#currentissues)
 5. [Contacts](#contacts)
 
