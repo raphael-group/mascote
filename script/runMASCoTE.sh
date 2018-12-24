@@ -2,8 +2,8 @@
 
 
 MASCOTE_HOME="/path/to/MASCoTE/"
-MASCOTE='python2 ${MASCOTE_HOME}src/mascotte.py'
-MIX='python2 ${MASCOTE_HOME}src/MixBAMs.py'
+MASCOTE="python2 ${MASCOTE_HOME}src/mascotte.py"
+MIX="python2 ${MASCOTE_HOME}src/MixBAMs.py"
 ART='/path/to/ART/bin/art_illumina'
 BWA='/path/to/BWA/bwa'
 SAM='/path/to/samtools/bin/samtools'
