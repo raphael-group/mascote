@@ -15,7 +15,7 @@ IGNORE='/path/to/ignore.txt'
 DIR="/path/to/rundir"
 N=2
 COV=30
-J=4
+J=22
 
 CWGD=1
 CWCL=1
@@ -54,7 +54,7 @@ mkdir -p ${BULK}
 
 
 echo -e "\033[1m\033[95m## Simulating genomes \033[0m"
-\time -v ${MASCOTE} ${REF} -n ${N} -s ${SEED} -g ${IGNORE} -l ${SNP} -x ${FASTA} -b 1kb -j 20 -r ${ADRATIO} -cwgd ${CWGD} -cwcl ${CWCL} -ccam ${CCAM} -ccna "${CFOC}" -swgd ${SWGD} -swcl ${SWCL} -scam ${SCAM} -scna "${SFOC}" |& tee ${FASTA}mascotte.log
+\time -v ${MASCOTE} ${REF} -n ${N} -s ${SEED} -g ${IGNORE} -l ${SNP} -x ${FASTA} -b 1kb -j ${J} -r ${ADRATIO} -cwgd ${CWGD} -cwcl ${CWCL} -ccam ${CCAM} -ccna "${CFOC}" -swgd ${SWGD} -swcl ${SWCL} -scam ${SCAM} -scna "${SFOC}" |& tee ${FASTA}mascotte.log
 
 
 echo -e "\033[1m\033[95m## Merging the haplotypes FASTA in unique diploid FASTA \033[0m"
