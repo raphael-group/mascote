@@ -1,3 +1,4 @@
+import os
 import math
 import copy
 import random
@@ -21,6 +22,7 @@ class HumanGenome:
         self.paternalfa = None
         self.numsnps = 0
         self.hetsnps = 0
+        self.phases = {}
 
     def buildGenome(self, maternalout, paternalout):
         self.maternalfa = maternalout
@@ -56,6 +58,10 @@ class HumanGenome:
                             self.chromosomes.append(name)
                             self.lengths[name] = length
 
+        with open(os.path.join(os.path.dirname(self.maternalfa), 'phases.tsv'), 'w') as o:
+            for g in sorted(self.phases.keys(), key=(lambda x : (int(''.join([l for l in x[0] if l.isdigit()])), x[1]))):
+                o.write('{}\t{}\t{}\n'.format(g[0], g[1], self.phases[g]))
+
 
     def buildHaplotypes(self, chromosome, sequence):
         mhap = copy.deepcopy(sequence)# if s != 'N' and s != 'n' and s != '*']
@@ -72,15 +78,21 @@ class HumanGenome:
                 self.numsnps += 1
                 if random.random() < self.HEHOratio:
                     # Heterozygous SNP
-                    alleles = random.sample(snplist[snp], 2)
-                    mhap[snp] = alleles[0].lower() if mhap[snp].islower() else alleles[0].upper()
-                    phap[snp] = alleles[1].lower() if phap[snp].islower() else alleles[1].upper()
+                    alleles = snplist[snp]
+                    if random.random() < 0.5:
+                        mhap[snp - 1] = alleles[0].lower() if mhap[snp].islower() else alleles[0].upper()
+                        phap[snp - 1] = alleles[1].lower() if phap[snp].islower() else alleles[1].upper()
+                        self.phases[(chromosome, snp)] = '0|1'
+                    else:
+                        mhap[snp - 1] = alleles[1].lower() if mhap[snp].islower() else alleles[1].upper()
+                        phap[snp - 1] = alleles[0].lower() if phap[snp].islower() else alleles[0].upper()
+                        self.phases[(chromosome, snp)] = '1|0'
                     self.hetsnps += 1
                 else:
                     # Homozygous SNP
-                    allele = random.choice(list(snplist[snp]))
-                    mhap[snp] = allele.lower() if mhap[snp].islower() else allele.upper()
-                    phap[snp] = allele.lower() if phap[snp].islower() else allele.upper()
+                    allele = snplist[snp][0]
+                    mhap[snp - 1] = allele.lower() if mhap[snp].islower() else allele.upper()
+                    phap[snp - 1] = allele.lower() if phap[snp].islower() else allele.upper()
 
         return mhap, phap, lenchr
 
