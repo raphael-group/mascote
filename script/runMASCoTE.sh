@@ -88,26 +88,16 @@ done
 wait
 
 
-echo -e "\033[1m\033[95m## Mapping sequencing reads to reference-human genome \033[0m"
+echo -e "\033[1m\033[95m## Mapping sequencing reads to reference-human genome and sorting results\033[0m"
 NORMAL=${FASTQ}'normal/'
-\time -v ${BWA} mem ${REF} ${NORMAL}normal1.fq ${NORMAL}normal2.fq -t ${J} 1> ${BAM}normal.sam 2> ${BAM}normal.sam.log &
+mkdir ${BAM}tmp_normal/
+(\time -v ${BWA} mem ${REF} ${NORMAL}normal1.fq ${NORMAL}normal2.fq -t ${J} | ${SAM} sort - -O bam -o ${BAM}normal.bam -T ${BAM}tmp_normal/ -@ ${J} 2> ${BAM}normal.bam.log) &
 for (( i=0; i<${N}; i++ ))
 do
     CLONE=clone${i}
     DIRCLONE=${FASTQ}${CLONE}'/'
-    \time -v ${BWA} mem ${REF} ${DIRCLONE}${CLONE}1.fq ${DIRCLONE}${CLONE}2.fq -t ${J} 1> ${BAM}${CLONE}.sam 2> ${BAM}${CLONE}.sam.log &
-done
-wait
-
-
-echo -e "\033[1m\033[95m## Sorting BAMs \033[0m"
-mkdir ${BAM}tmp_normal/
-\time -v ${SAM} sort -O bam -o ${BAM}normal.bam -T ${BAM}tmp_normal/ ${BAM}normal.sam -@ ${J} &> ${BAM}normal.bam.log &
-for (( i=0; i<${N}; i++ ))
-do
-    CLONE=clone${i}
     mkdir -p ${BAM}tmp_${CLONE}/
-    \time -v ${SAM} sort -O bam -o ${BAM}${CLONE}.bam -T ${BAM}tmp_${CLONE}/ ${BAM}${CLONE}.sam -@ ${J} &> ${BAM}${CLONE}.bam.log &
+    (\time -v ${BWA} mem ${REF} ${DIRCLONE}${CLONE}1.fq ${DIRCLONE}${CLONE}2.fq -t ${J} | ${SAM} sort - -O bam -o ${BAM}${CLONE}.bam -T ${BAM}tmp_${CLONE}/ -@ ${J} 2> ${BAM}${CLONE}.bam.log) &
 done
 wait
 
