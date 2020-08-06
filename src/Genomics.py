@@ -43,7 +43,7 @@ class HumanGenome:
                                     pafa.write("{}\n".format(''.join(paternalhap)))
                                     self.chromosomes.append(name)
                                     self.lengths[name] = length
-                                name = line.strip()[1:]
+                                name = line.strip()[1:].split()[0]
                                 sequence = []
                             else:
                                 if not name is self.ignorelist:
