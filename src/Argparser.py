@@ -39,8 +39,8 @@ def parse_mascotte_arguments():
 
     if not os.path.isfile(args.REFERENCE):
         raise ValueError(sp.error("The specified human reference-genome file does not exist!"))
-    if args.numclones <= 0:
-        raise ValueError(sp.error("The number of clones must be a non-zero positive integer!"))
+    if args.numclones < 0:
+        raise ValueError(sp.error("The number of clones must be a positive integer or zero, when only a matched-normal sample should be generated!"))
     if args.rndseed != None and args.rndseed < 0:
         raise ValueError(sp.error("The random seed must be a positive integer!"))
     if args.ignore != None and not os.path.isfile(args.ignore):
