@@ -1,35 +1,35 @@
 #!/usr/bin/bash
 
 
-MASCOTE_HOME="/path/to/MASCoTE/"
+MASCOTE_HOME="/opt/ragr/zaccaria/simsc/new_mascote/"
 MASCOTE="python2 ${MASCOTE_HOME}src/mascotte.py"
 MIX="python2 ${MASCOTE_HOME}src/MixBAMs.py"
-ART='/path/to/ART/bin/art_illumina'
-BWA='/path/to/BWA/bwa'
-SAM='/path/to/samtools/bin/samtools'
+ART='/n/fs/ragr-code/bio/ART/bin/art_illumina'
+BWA='/n/fs/ragr-code/bio/bwa-0.7.17/bwa'
+SAM='/n/fs/ragr-code/bio/samtools-1.9/bin/samtools'
 
-REF='/path/to/ref.fa'
-SNP='/path/to/dbsnp.tsv'
-IGNORE='/path/to/ignore.txt'
+REF='/opt/ragr/zaccaria/simsc/preliminary/hg19.fa'
+SNP='/opt/ragr/zaccaria/bulk-simulations/110617_full_noWGD/preliminary/dbSNP.hg19.tsv'
+IGNORE='ignore.txt'
 
-DIR="/path/to/rundir"
+DIR="/opt/ragr/zaccaria/simsc/new_mascote/script/"
 N=2
 COV=30
 J=22
 
-CWGD=1
-CWCL=1
-CCAM=10
-CFOC="20Mb:5 10Mb:10 3Mb:20 1Mb:10000:30"
+CWGD=0
+CWCL=0
+CCAM=1
+CFOC="10Mb:1"
 
 SWGD=0
-SWCL=1
-SCAM=14
-SFOC="20Mb:5 10Mb:10 3Mb:20 1Mb:10000:30"
+SWCL=0
+SCAM=0
+SFOC="10Mb:4"
 
-ADRATIO=0.67
+ADRATIO=0.2
 
-PROPS="0.1:0.9: 0.2::0.8"
+PROPS="0.1:0.9: 0.2::0.8 0.1:0.6:0.3"
 
 set -e
 set -o xtrace
@@ -38,7 +38,7 @@ PS4='\''[\t]'\'
 
 echo -e "\033[1m\033[95m### Simulating datasets with number of clones '${CLONES}' \033[0m"
 
-SEED=${RANDOM}
+SEED=25
 echo -e "\033[1m\033[95m## Selecting random seed: '${SEED}' \033[0m"
 
 echo -e "\033[1m\033[95m## Setting up folders \033[0m"
@@ -88,26 +88,16 @@ done
 wait
 
 
-echo -e "\033[1m\033[95m## Mapping sequencing reads to reference-human genome \033[0m"
+echo -e "\033[1m\033[95m## Mapping sequencing reads to reference-human genome and sorting results\033[0m"
 NORMAL=${FASTQ}'normal/'
-\time -v ${BWA} mem ${REF} ${NORMAL}normal1.fq ${NORMAL}normal2.fq -t ${J} 1> ${BAM}normal.sam 2> ${BAM}normal.sam.log &
+mkdir -p ${BAM}tmp_normal/
+(\time -v ${BWA} mem ${REF} ${NORMAL}normal1.fq ${NORMAL}normal2.fq -t ${J} | ${SAM} sort - -O bam -o ${BAM}normal.bam -T ${BAM}tmp_normal/ -@ ${J} 2> ${BAM}normal.bam.log) &
 for (( i=0; i<${N}; i++ ))
 do
     CLONE=clone${i}
     DIRCLONE=${FASTQ}${CLONE}'/'
-    \time -v ${BWA} mem ${REF} ${DIRCLONE}${CLONE}1.fq ${DIRCLONE}${CLONE}2.fq -t ${J} 1> ${BAM}${CLONE}.sam 2> ${BAM}${CLONE}.sam.log &
-done
-wait
-
-
-echo -e "\033[1m\033[95m## Sorting BAMs \033[0m"
-mkdir ${BAM}tmp_normal/
-\time -v ${SAM} sort -O bam -o ${BAM}normal.bam -T ${BAM}tmp_normal/ ${BAM}normal.sam -@ ${J} &> ${BAM}normal.bam.log &
-for (( i=0; i<${N}; i++ ))
-do
-    CLONE=clone${i}
     mkdir -p ${BAM}tmp_${CLONE}/
-    \time -v ${SAM} sort -O bam -o ${BAM}${CLONE}.bam -T ${BAM}tmp_${CLONE}/ ${BAM}${CLONE}.sam -@ ${J} &> ${BAM}${CLONE}.bam.log &
+    (\time -v ${BWA} mem ${REF} ${DIRCLONE}${CLONE}1.fq ${DIRCLONE}${CLONE}2.fq -t ${J} | ${SAM} sort - -O bam -o ${BAM}${CLONE}.bam -T ${BAM}tmp_${CLONE}/ -@ ${J} 2> ${BAM}${CLONE}.bam.log) &
 done
 wait
 
