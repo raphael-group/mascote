@@ -1,44 +1,45 @@
 #!/usr/bin/bash
 
 
-MASCOTE_HOME="/opt/ragr/zaccaria/simsc/new_mascote/"
+MASCOTE_HOME="/path/to/MASCoTE/"
 MASCOTE="python2 ${MASCOTE_HOME}src/mascotte.py"
 MIX="python2 ${MASCOTE_HOME}src/MixBAMs.py"
-ART='/n/fs/ragr-code/bio/ART/bin/art_illumina'
-BWA='/n/fs/ragr-code/bio/bwa-0.7.17/bwa'
-SAM='/n/fs/ragr-code/bio/samtools-1.9/bin/samtools'
+ART='/path/to/ART/bin/art_illumina'
+BWA='/path/to/BWA/bwa'
+SAM='/path/to/samtools/bin/samtools'
 
+REF='/path/to/ref.fa'
+SNP='/path/to/dbsnp.tsv'
+IGNORE='/path/to/ignore.txt'
 REF='/opt/ragr/zaccaria/simsc/preliminary/hg19.fa'
 SNP='/opt/ragr/zaccaria/bulk-simulations/110617_full_noWGD/preliminary/dbSNP.hg19.tsv'
 IGNORE='ignore.txt'
 
-DIR="/opt/ragr/zaccaria/simsc/new_mascote/script/"
+DIR="/path/to/rundir"
 N=2
 COV=30
 J=22
 
-CWGD=0
-CWCL=0
-CCAM=0
-CFOC="5Mb:2"
+CWGD=1
+CWCL=1
+CCAM=10
+CFOC="20Mb:5 10Mb:10 3Mb:20 1Mb:10000:30"
 
 SWGD=0
-SWCL=0
-SCAM=0
-SFOC="5Mb:3"
+SWCL=1
+SCAM=14
+SFOC="20Mb:5 10Mb:10 3Mb:20 1Mb:10000:30"
 
-ADRATIO=0.5
+ADRATIO=0.67
 
-PROPS="0.1:0.9: 0.2::0.8 0.1:0.6:0.3"
+PROPS="0.1:0.9: 0.2::0.8"
 
 set -e
 set -o xtrace
 PS4='\''[\t]'\'
 
 
-echo -e "\033[1m\033[95m### Simulating datasets with number of clones '${CLONES}' \033[0m"
-
-SEED=25
+echo -e "\033[1m\033[95m### Simulating datasets with number of clones '${N}' \033[0m"
 echo -e "\033[1m\033[95m## Selecting random seed: '${SEED}' \033[0m"
 
 echo -e "\033[1m\033[95m## Setting up folders \033[0m"
