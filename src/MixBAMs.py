@@ -77,7 +77,7 @@ def parse_args():
         sample =  [float(u) if u != '' else None for u in p.split(':')]
         if len(sample) != len(names):
             raise ValueError(error("{} is bad formatted!\nFor every tumor and normal sample the proportions of each clone must be specified separated by :, an empty entry is used when clone is not present!".format(p)))
-        elif sum(e if e != None else 0 for e in sample) != 1.0:
+        elif abs(1.0 - sum(e if e != None else 0 for e in sample)) > 0.001:
             raise ValueError(error("The proportions of the following sample {} does not sum up to 1!".format(p)))
         else:
             proportions.append({name : u for name, u in zip(names, sample)})
