@@ -101,33 +101,36 @@ def main():
     args = parse_args()
     sys.stderr.write(info("\n".join(["\033[96m{}:\t{}\033[0m".format(key, args[key]) for key in args]) + "\n"))
 
-    sys.stderr.write(log("# Get total read counts for each sample\n"))
-    counts = getTotalCounts(normal=args["normal"], tumors=args["tumors"], names=args["names"], samtools=args["samtools"], totalcounts=args["totalcounts"], j=args["jobs"], q=args["q"])
-    for sample in counts: sys.stderr.write(info("In BAM of {} the total-read count is {}\n".format(sample, counts[sample])))
+    if len(args['tumors']) > 0:
+        sys.stderr.write(log("# Get total read counts for each sample\n"))
+        counts = getTotalCounts(normal=args["normal"], tumors=args["tumors"], names=args["names"], samtools=args["samtools"], totalcounts=args["totalcounts"], j=args["jobs"], q=args["q"])
+        for sample in counts: sys.stderr.write(info("In BAM of {} the total-read count is {}\n".format(sample, counts[sample])))
 
-    sys.stderr.write(log("# Compute genome length for each clone\n"))
-    lengths = computeLengths(copynumbers=args["copynumbers"], names=args["names"])
-    for sample in lengths: sys.stderr.write(info("{} genome of length {}\n".format(sample, lengths[sample])))
+        sys.stderr.write(log("# Compute genome length for each clone\n"))
+        lengths = computeLengths(copynumbers=args["copynumbers"], names=args["names"])
+        for sample in lengths: sys.stderr.write(info("{} genome of length {}\n".format(sample, lengths[sample])))
 
-    for proportions in args["proportions"]:
+        for proportions in args["proportions"]:
 
-        sys.stderr.write(log("# Generating bulk sample with proportions: {}\n".format(", ".join(["{}= {}".format(sample, proportions[sample]) for sample in proportions]))))
+            sys.stderr.write(log("# Generating bulk sample with proportions: {}\n".format(", ".join(["{}= {}".format(sample, proportions[sample]) for sample in proportions]))))
 
-        sys.stderr.write(log("## Compute sampling proportions\n"))
-        mixing = computeMixing(names=args["names"], counts=counts, lengths=lengths, proportions=proportions)
-        for sample in mixing: sys.stderr.write(info("\033[96mFrom {} sampling {}\033[0m\n".format(sample, mixing[sample])))
+            sys.stderr.write(log("## Compute sampling proportions\n"))
+            mixing = computeMixing(names=args["names"], counts=counts, lengths=lengths, proportions=proportions)
+            for sample in mixing: sys.stderr.write(info("\033[96mFrom {} sampling {}\033[0m\n".format(sample, mixing[sample])))
 
-        sys.stderr.write(log("## Sample from given BAM files\n"))
-        samplings = sampling(normal=args["normal"], tumors=args["tumors"], names=args["names"], tmp=args["temp"], mixing=mixing, samtools=args["samtools"], q=args["q"], j=args["jobs"], seed=args["seed"])
-        for sample, sampled in zip([args["normal"]]+args["tumors"], samplings): sys.stderr.write(info("Sampled {} from {}\n".format(sampled, sample)))
+            sys.stderr.write(log("## Sample from given BAM files\n"))
+            samplings = sampling(normal=args["normal"], tumors=args["tumors"], names=args["names"], tmp=args["temp"], mixing=mixing, samtools=args["samtools"], q=args["q"], j=args["jobs"], seed=args["seed"])
+            for sample, sampled in zip([args["normal"]]+args["tumors"], samplings): sys.stderr.write(info("Sampled {} from {}\n".format(sampled, sample)))
 
-        output = os.path.splitext(os.path.basename(args["output"]))[0] + "_" + ("_".join(["{}{}".format(proportions[u], u) if u != None else 0 for u in proportions])).replace('.', '') + ".bam"
-        sys.stderr.write(log("## Merging samples from BAM files in the resulting mixed BAM\n"))
-        merge(output=output, normal=args["normal"], samtools=args["samtools"], samplings=samplings, j=args["jobs"], tmp=args["temp"])
+            output = os.path.splitext(os.path.basename(args["output"]))[0] + "_" + ("_".join(["{}{}".format(proportions[u], u) if u != None else 0 for u in proportions])).replace('.', '') + ".bam"
+            sys.stderr.write(log("## Merging samples from BAM files in the resulting mixed BAM\n"))
+            merge(output=output, normal=args["normal"], samtools=args["samtools"], samplings=samplings, j=args["jobs"], tmp=args["temp"])
 
-        sys.stderr.write(log("## Removing temporary folder\n"))
-        if os.path.exists(args["temp"]):
-            shutil.rmtree(args["temp"])
+            sys.stderr.write(log("## Removing temporary folder\n"))
+            if os.path.exists(args["temp"]):
+                shutil.rmtree(args["temp"])
+    else:
+        sys.stderr.write(log("# Not tumor clones provided, ending..\n"))
 
     return
 

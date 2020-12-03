@@ -36,32 +36,35 @@ def main():
     Support.log('Maternal chromosome of human genome written in {}\n'.format(maternalhuman), level='INFO')
     Support.log('Maternal chromosome of human genome written in {}\n'.format(paternalhuman), level='INFO')
 
-    Support.log(msg="# Simulating tumor clones and their evolution through specified CNAs\n", level="STEP")
-    tumor = Mutation.simulateEvolution(numclones=args['numclones'], humanGenome=human, binsize=args['binsize'], mutations=args['mutations'])
-    Support.log('Simulated tumor clones: {}\n'.format(', '.join([clone.label for clone in tumor.clones])), level='INFO')
-    Support.log('Founder tumor clone: {}\n'.format(tumor.root.label), level='INFO')
-    with open(os.path.join(args['xdir'], 'tumor.dot'), 'w') as o: o.write("{}\n".format(tumor.draw()))
-    Support.log('The resulting tumor evolution of clones and related CNAs have been drawn in {} as dot format\n'.format(os.path.join(args['xdir'], 'tumor.dot')), level='INFO')
-    Support.log('Genome length of the various tumor clones:\n\t{}\n'.format('\n\t'.join(['{}: {}'.format(clone.label, clone.genomeLength()) for clone in tumor.clones])), level='INFO')
-    Support.log('Computing and segmenting the copy-number profiles jointly for all tumor clones\n', level='INFO')
-    segments = segmentation(evolution=tumor)
-    Support.log('Total number of resulting segments= {}\n'.format(sum(len(segments[chro]) for chro in tumor.human.chromosomes)), level='INFO')
-    segout = os.path.join(args['xdir'], 'copynumbers.csv')
-    with open(segout, 'w') as o:
-        o.write('\t'.join(['#CHR', 'START', 'END'] + [clone.label for clone in tumor.clones]) + '\n')
-        o.write('\n'.join(['\t'.join(map(str, [chro, seg[0], seg[1]]+['{}|{}'.format(segments[chro][seg][clone.idx]['m'], segments[chro][seg][clone.idx]['p']) for clone in tumor.clones])) for chro in tumor.human.chromosomes for seg in sorted(segments[chro], key=(lambda x : x[0]))]))
-        o.write('\n')
-    Support.log('The allele-specific copy number profiles for every tumor clone has been written in {}\n'.format(segout), level='INFO')
-    Support.log('Writing the FASTA-format genomes of tumor clones\n', level='INFO')
-    if args['jobs'] == 1:
-        for clone in tumor.clones:
-            maternalout = os.path.join(args['xdir'], '{}.maternal.fa'.format(clone.label))
-            paternalout = os.path.join(args['xdir'], '{}.paternal.fa'.format(clone.label))
-            clone.buildGenome(maternalout, paternalout)
+    if args['numclones'] > 0:
+        Support.log(msg="# Simulating tumor clones and their evolution through specified CNAs\n", level="STEP")
+        tumor = Mutation.simulateEvolution(numclones=args['numclones'], humanGenome=human, binsize=args['binsize'], mutations=args['mutations'])
+        Support.log('Simulated tumor clones: {}\n'.format(', '.join([clone.label for clone in tumor.clones])), level='INFO')
+        Support.log('Founder tumor clone: {}\n'.format(tumor.root.label), level='INFO')
+        with open(os.path.join(args['xdir'], 'tumor.dot'), 'w') as o: o.write("{}\n".format(tumor.draw()))
+        Support.log('The resulting tumor evolution of clones and related CNAs have been drawn in {} as dot format\n'.format(os.path.join(args['xdir'], 'tumor.dot')), level='INFO')
+        Support.log('Genome length of the various tumor clones:\n\t{}\n'.format('\n\t'.join(['{}: {}'.format(clone.label, clone.genomeLength()) for clone in tumor.clones])), level='INFO')
+        Support.log('Computing and segmenting the copy-number profiles jointly for all tumor clones\n', level='INFO')
+        segments = segmentation(evolution=tumor)
+        Support.log('Total number of resulting segments= {}\n'.format(sum(len(segments[chro]) for chro in tumor.human.chromosomes)), level='INFO')
+        segout = os.path.join(args['xdir'], 'copynumbers.csv')
+        with open(segout, 'w') as o:
+            o.write('\t'.join(['#CHR', 'START', 'END'] + [clone.label for clone in tumor.clones]) + '\n')
+            o.write('\n'.join(['\t'.join(map(str, [chro, seg[0], seg[1]]+['{}|{}'.format(segments[chro][seg][clone.idx]['m'], segments[chro][seg][clone.idx]['p']) for clone in tumor.clones])) for chro in tumor.human.chromosomes for seg in sorted(segments[chro], key=(lambda x : x[0]))]))
+            o.write('\n')
+        Support.log('The allele-specific copy number profiles for every tumor clone has been written in {}\n'.format(segout), level='INFO')
+        Support.log('Writing the FASTA-format genomes of tumor clones\n', level='INFO')
+        if args['jobs'] == 1:
+            for clone in tumor.clones:
+                maternalout = os.path.join(args['xdir'], '{}.maternal.fa'.format(clone.label))
+                paternalout = os.path.join(args['xdir'], '{}.paternal.fa'.format(clone.label))
+                clone.buildGenome(maternalout, paternalout)
+        else:
+            builder = Builder.CloneGenomeBuilder(tumor, args['xdir'])
+            builder.parallelbuild(args['jobs'])
+        Support.log('Tumor-clone genomes wrote in:\n{}\n'.format('\n'.join(['\t{}: maternal > {} and paternal > {}'.format(clone.label, os.path.join(args['xdir'], '{}.maternal.fa'.format(clone.label)), os.path.join(args['xdir'], '{}.paternal.fa'.format(clone.label))) for clone in tumor.clones])), level='INFO')
     else:
-        builder = Builder.CloneGenomeBuilder(tumor, args['xdir'])
-        builder.parallelbuild(args['jobs'])
-    Support.log('Tumor-clone genomes wrote in:\n{}\n'.format('\n'.join(['\t{}: maternal > {} and paternal > {}'.format(clone.label, os.path.join(args['xdir'], '{}.maternal.fa'.format(clone.label)), os.path.join(args['xdir'], '{}.paternal.fa'.format(clone.label))) for clone in tumor.clones])), level='INFO')
+        Support.log(msg="# No tumor clones will be generated as input tumor clones is 0\n", level="INFO")
     Support.log('KTHXBY!\n', level='STEP')
 
 

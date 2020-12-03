@@ -58,12 +58,13 @@ def parseSNPList(filename):
         with open(filename, 'r') as f:
             for line in f:
                 line = line.strip().split()
-                if len(line) > 2:
+                if len(line) > 2 and len(line[2]) == 1 and len(line[3]) == 1:
                     pos = int(line[1])
                     if not line[0] in snplist:
                         snplist[line[0]] = {}
                     if not pos in snplist[line[0]]:
-                        snplist[line[0]][pos] = set(char.upper() for rest in line[2:] for char in rest if char.upper() in ('A', 'C', 'G', 'T'))
+                        snplist[line[0]][pos] = (line[2].upper(), line[3].upper())
+                        assert snplist[line[0]][pos][0] in {'A', 'C', 'G', 'T'} and snplist[line[0]][pos][1] in {'A', 'C', 'G', 'T'}
         return snplist
     else:
         return None
